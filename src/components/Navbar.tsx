@@ -8,27 +8,27 @@ const Navbar = () => {
   const { isSignedIn, user } = useUser()
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="border-b border-gray-800 bg-gray-950/90 backdrop-blur-sm fixed w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
-              <span className="text-2xl font-bold text-blue-600">FitApp</span>
+              <span className="text-2xl font-bold text-blue-600">FitAI</span>
             </Link>
           </div>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          <div className="hidden md:flex ml-20 items-center space-x-8">
+            <Link href="/" className="text-gray-100 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
               Home
             </Link>
             {isSignedIn && (
               <>
-                <Link href="/generate-program" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <Link href="/generate-program" className="text-gray-100 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Generate Program
                 </Link>
-                <Link href="/profile" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <Link href="/profile" className="text-gray-100 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Profile
                 </Link>
               </>
@@ -39,7 +39,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {isSignedIn ? (
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-100">
                   Welcome, {user?.firstName || 'User'}!
                 </span>
                 <UserButton 

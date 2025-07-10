@@ -1,11 +1,11 @@
 
-import { SignedIn, SignInButton, SignOutButton, SignedOut} from '@clerk/nextjs'
+import Hero from '@/components/Hero'
 import React from 'react'
 
 const HomePage = () => {
   return (
     <div>
-      Home
+      <Hero />
     </div>
   )
 }
