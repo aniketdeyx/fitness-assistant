@@ -5,12 +5,7 @@ import React from 'react'
 const HomePage = () => {
   return (
     <div>
-      <SignedIn>
-      <SignOutButton />
-      </SignedIn>
-      <SignedOut>
-        <SignInButton />
-      </SignedOut>
+      Home
     </div>
   )
 }
