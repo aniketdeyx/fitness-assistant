@@ -1,10 +1,10 @@
 "use client";
 
 import { vapi } from '@/lib/vapi';
-import { useUser } from '@clerk/nextjs';
 import { Brain, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {useEffect, useRef, useState} from 'react'
+import { useUser } from '@clerk/nextjs';
 
 const GenerateProgramPage = () => {
   const [callActive, setCallActive] = useState(false);
@@ -14,8 +14,8 @@ const GenerateProgramPage = () => {
   const [messages, setMessages] = useState([]);
   const [callEnded, setCallEnded] = useState(false);
 
-  const {user} = useUser();
   const router = useRouter();
+  const { user } = useUser();
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,10 +45,9 @@ const GenerateProgramPage = () => {
         setMessages([]);
         setCallEnded(false);
         const fullName = user?.firstName ? `${user.firstName} ${user.lastName || ""}`.trim() : "There";
-        await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
+        await vapi.start(undefined, undefined, undefined, process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
           variableValues: {
-            full_name: fullName,
-
+            full_name: fullName
           }
         })
 
@@ -205,7 +204,7 @@ const GenerateProgramPage = () => {
                 <User className={`w-6 h-6 transition-colors duration-300 ${
                   callActive && !isSpeaking ? 'text-green-400' : 'text-gray-400'
                 }`} />
-                <h3 className="text-2xl font-semibold text-white">{user?.firstName || 'You'}</h3>
+                {/* <h3 className="text-2xl font-semibold text-white">{user?.firstName || 'You'}</h3> */}
                 {callActive && !isSpeaking && (
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse ml-2"></div>
                 )}
@@ -230,48 +229,83 @@ const GenerateProgramPage = () => {
           </div>
         </div>
 
-        {/* Call Controls */}
-        <div className="bg-gray-800/30 border border-gray-700 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              {connecting && (
-                <div className="flex items-center space-x-2 text-yellow-400">
-                  <div className="w-3 h-3 bg-yellow-400 rounded-full animate-spin"></div>
-                  <span className="font-medium">Connecting to AI Coach...</span>
-                </div>
-              )}
-              {callActive && (
-                <div className="flex items-center space-x-2 text-green-400">
-                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="font-medium">Call Active</span>
-                </div>
-              )}
-              {callEnded && (
-                <div className="flex items-center space-x-2 text-blue-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        {/* Centered Call Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={toggleCall}
+            disabled={connecting}
+            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
+              callActive
+                ? 'bg-red-600 hover:bg-red-700 shadow-red-500/30'
+                : 'bg-green-600 hover:bg-green-700 shadow-green-500/30'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {connecting ? (
+              <div className="w-8 h-8 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : callActive ? (
+              // End call icon (phone with x or hangup)
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.68.28-.26 0-.51-.1-.7-.28L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.7C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.68c.18.17.29.42.29.7 0 .28-.11.53-.29.7l-2.51 2.49c-.19.18-.44.28-.7.28-.25 0-.5-.1-.68-.28-.79-.73-1.68-1.36-2.66-1.85-.33-.16-.56-.51-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/>
+              </svg>
+            ) : (
+              // Dial-in icon (phone)
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Status Display */}
+        <div className="flex justify-center">
+          {connecting && (
+            <div className="flex items-center space-x-2 text-yellow-400">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Connecting to AI Coach...</span>
+            </div>
+          )}
+          {callActive && (
+            <div className="flex items-center space-x-2 text-green-400">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Call Active</span>
+            </div>
+          )}
+          {callEnded && (
+            <div className="flex items-center space-x-2 text-blue-400">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-sm font-medium">Session Complete - Redirecting...</span>
+            </div>
+          )}
+        </div>
+
+        {/* Conversation Container */}
+        <div className="bg-gray-800/30 border border-gray-700 rounded-lg min-h-[400px]">
+          <div className="p-6">
+            <h3 className="text-lg font-semibold text-white mb-4 border-b border-gray-700 pb-2">
+              Conversation
+            </h3>
+            <div 
+              ref={messageContainerRef}
+              className="max-h-80 overflow-y-auto space-y-3"
+            >
+              {messages.length === 0 ? (
+                <div className="text-center text-gray-400 py-8">
+                  <svg className="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  <span className="font-medium">Session Complete - Redirecting...</span>
+                  <p>Start a call to begin your conversation with the AI Coach</p>
                 </div>
+              ) : (
+                messages.map((message, index) => (
+                  <div key={index} className="message">
+                    {/* Message content will be rendered here */}
+                    <p className="text-gray-300">{message}</p>
+                  </div>
+                ))
               )}
             </div>
-
-            <button
-              onClick={toggleCall}
-              disabled={connecting}
-              className={`px-8 py-3 rounded-lg font-medium transition-all duration-300 ${
-                callActive
-                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg hover:shadow-blue-500/25'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {connecting ? (
-                <span className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Connecting...</span>
-                </span>
-              ) : callActive ? 'End Call' : 'Start Call'}
-            </button>
           </div>
         </div>
       </div>

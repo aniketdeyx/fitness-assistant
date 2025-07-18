@@ -14,7 +14,7 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
-              <span className="text-2xl font-bold text-blue-600">FitAI</span>
+              <span className="text-2xl font-bold text-blue-600">Axiom Fit</span>
             </Link>
           </div>
 
