@@ -10,9 +10,8 @@ import Card from '@/components/Card';
 const GenerateProgramPage = () => {
   const [callActive, setCallActive] = useState(false);
   const [connecting, setConnecting] = useState(false);
-  const [program, setProgram] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [callEnded, setCallEnded] = useState(false);
 
   const router = useRouter();
@@ -84,8 +83,11 @@ const GenerateProgramPage = () => {
       console.log("Speech ended");
       setIsSpeaking(false);
     };
-    const handleMessage = () => {
-
+    const handleMessage = (message: any) => {
+      if(message.type === "transcript" && message.transcriptType === "final") {
+        const newMessage = { content: message.transcript, role: message.role };
+        setMessages((prev) => [...prev, newMessage])
+      }
     };
     const handleError = (error: Error) => {
       console.log("An error occurred", error);
@@ -160,9 +162,17 @@ const GenerateProgramPage = () => {
                 </div>
               ) : (
                 messages.map((message, index) => (
-                  <div key={index} className="message">
-                    {/* Message content will be rendered here */}
-                    <p className="text-gray-300">{message}</p>
+                  <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
+                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                      message.role === 'user' 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-700 text-gray-100'
+                    }`}>
+                      <p className="text-sm">{message.content}</p>
+                      <span className="text-xs opacity-70 mt-1 block">
+                        {message.role === 'user' ? 'You' : 'AI Coach'}
+                      </span>
+                    </div>
                   </div>
                 ))
               )}
