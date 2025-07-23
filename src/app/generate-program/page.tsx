@@ -48,7 +48,8 @@ const GenerateProgramPage = () => {
         const fullName = user?.firstName ? `${user.firstName} ${user.lastName || ""}`.trim() : "There";
         await vapi.start(undefined, undefined, undefined, process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
           variableValues: {
-            full_name: fullName
+            full_name: fullName,
+            user_id: user?.id
           }
         })
 
@@ -144,7 +145,7 @@ const GenerateProgramPage = () => {
         </div>
 
         {/* Conversation Container */}
-        <div className="bg-gray-800/30 border border-gray-700 rounded-lg min-h-[400px]">
+        <div className="bg-gray-800/30 border mb-10 border-gray-700 rounded-lg min-h-[400px]">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-white mb-4 border-b border-gray-700 pb-2">
               Conversation
